@@ -8,4 +8,7 @@ for i in range(0,len(df)):
     nan_country = df.iloc[i,0]
     nan_country_data = df.loc[df['country'] == nan_country]
     min_vacc = nan_country_data.nsmallest(1,'daily_vaccinations').iloc[0,2]
-    df.iloc[i, 2] = min_vacc
+    if np.isnan(min_vacc) == True :
+      df.iloc[i, 2] = 0
+    else:
+      df.iloc[i, 2] = min_vacc
