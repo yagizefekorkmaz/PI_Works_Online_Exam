@@ -1,0 +1,29 @@
+#---Q5---
+import pandas as pd
+import numpy as np
+
+df = pd.read_csv('country_vaccination_stats.csv')
+
+#--Q4 Part(to change the NaN values)--
+for i in range(0,len(df)):
+  if np.isnan(df.iloc[i, 2]) == True :
+    nan_country = df.iloc[i,0]
+    nan_country_data = df.loc[df['country'] == nan_country]
+    min_vacc = nan_country_data.nsmallest(1,'daily_vaccinations').iloc[0,2]
+    if np.isnan(min_vacc) == True :
+      df.iloc[i, 2] = 0
+    else:
+      df.iloc[i, 2] = min_vacc
+
+medians = pd.DataFrame(index=range(len(df)),columns=["Country", "Vaccination Median"])
+temp_country = 'Argentina'
+#--Q5 Part--
+for i in range(0,len(df)):
+    temp_country = df.iloc[i,0]
+    if temp_country != df.iloc[i-1,0]:
+      medians.iloc[i,0] = temp_country
+      temp_country_data = df.loc[df["country"] == temp_country]
+      medians.iloc[i,1] = temp_country_data['daily_vaccinations'].median(axis=0)
+medians = medians.dropna()
+medians['Vaccination Median'] = pd.to_numeric(medians['Vaccination Median'], errors='coerce')
+medians.nlargest(3, 'Vaccination Median')
